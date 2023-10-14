@@ -9,7 +9,7 @@
 using namespace std;
 
 //takes the last the number added to the stack
-//and does the calculation with the operator
+//and does the calculation
 int calc(int numberOne, int numberTwo, char postfix){
 	int temp = 0;
 	
@@ -21,8 +21,13 @@ int calc(int numberOne, int numberTwo, char postfix){
 			temp = numberOne - numberTwo;
 			break;
 		case '/':
-			temp = numberOne / numberTwo;
-			break;
+			if(numberTwo!= 0){
+				temp = numberOne / numberTwo;
+			}
+			else{
+				cout<< "Error: Division by zero."<<endl;
+				invalid = true;
+			}
 		case '*':
 			temp = numberOne * numberTwo;
 			break;	
@@ -38,6 +43,7 @@ int main() {
 	string postfix;
 	int x;
 	stringstream parser;
+	bool invalid = false;
 	
 	cout<< "Enter a postfix expression:"<<endl;
 	getline(cin, postfix);
@@ -52,11 +58,10 @@ int main() {
 		if(postfix[i] != '+'&& postfix[i] != '-' && postfix[i] != '/' && postfix[i] != '*' &&
 		postfix[i] != '^' && postfix[i] != ' '){
 			
-			//converts char into int (x is declared as integer)
+			//converts char into int
 			parser << postfix[i];
 			parser>> x;
 			
-			cout<< x<< endl;
 			operand_stack.push(x);
 			//stringstream func
 			//clears the 'parser' string 
@@ -67,19 +72,28 @@ int main() {
 		//pops two from the stack 
 		//and sends them to calc func with the operator
 		else if(postfix[i] != ' '){
-			
+			if(operand_stack.size()< 2){
+				cout<<"Error: Invalid postfix expression.";
+				invalid= true;
+			}
+			else {
 			operandTwo = operand_stack.top();
 			operand_stack.pop();
 			operandOne = operand_stack.top();
 			operand_stack.pop();
 			
 			operand_stack.push(calc(operandOne, operandTwo, postfix[i]));
+			}
+			
 		}
 		
 	}
 	
 	//result
+	if(!invalid){
 	cout<< operand_stack.top();
+	}
+	
 	    
     cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
     fflush(stdin); 

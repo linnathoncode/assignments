@@ -8,6 +8,8 @@
 
 using namespace std;
 
+bool invalid = false;
+
 //takes the last the number added to the stack
 //and does the calculation
 int calc(int numberOne, int numberTwo, char postfix){
@@ -27,7 +29,9 @@ int calc(int numberOne, int numberTwo, char postfix){
 			else{
 				cout<< "Error: Division by zero."<<endl;
 				invalid = true;
+				return 1;
 			}
+			break;
 		case '*':
 			temp = numberOne * numberTwo;
 			break;	
@@ -41,9 +45,8 @@ int calc(int numberOne, int numberTwo, char postfix){
 
 int main() {
 	string postfix;
-	int x;
 	stringstream parser;
-	bool invalid = false;
+
 	
 	cout<< "Enter a postfix expression:"<<endl;
 	getline(cin, postfix);
@@ -58,6 +61,7 @@ int main() {
 		if(postfix[i] != '+'&& postfix[i] != '-' && postfix[i] != '/' && postfix[i] != '*' &&
 		postfix[i] != '^' && postfix[i] != ' '){
 			
+			int x;
 			//converts char into int
 			parser << postfix[i];
 			parser>> x;
@@ -75,6 +79,7 @@ int main() {
 			if(operand_stack.size()< 2){
 				cout<<"Error: Invalid postfix expression.";
 				invalid= true;
+				return 1;
 			}
 			else {
 			operandTwo = operand_stack.top();

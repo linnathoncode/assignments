@@ -66,14 +66,10 @@ void show(){
 	printf("\n");
 }
 
-//exit
-void exit(){
-	return;
-}
-
 int main(){
 	int secim;
-	while(1){
+	do
+	{
 		printf("\n");
 		printf("1 - Eleman ekle \n");
 		printf("2 - Eleman sil \n");
@@ -92,13 +88,12 @@ int main(){
 				show();
 			break;
 			case 4:
-				exit();
+				break;
 			default:
 				printf("Yanlis bir secim girdiniz. \n");
-		}		
-	}
+		}
+	}while(secim != 4);
 }
-
 
 
 

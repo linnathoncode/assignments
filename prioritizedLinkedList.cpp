@@ -1,87 +1,93 @@
 #include <iostream>
+
 using namespace std;
 
-class list {
-private:
-    int data;
-    int priority;
-    list* next;
-
-public:
-    list(int d, int p) : data(d), priority(p), next(nullptr) {}
-
-    void ekle(int, int);
-    void sil(int);
-    void listele();
-    int say();
+class node{
+	public:
+		int data;
+		int priority;
+		node *next;
 };
 
-list* head = nullptr;
 
-void list::ekle(int sayi, int priority) {
-    list* newlist = new list(sayi, priority);
-    list* p = head;
 
-    if (!p || priority < head->priority) {
-        newlist->next = head;
-        head = newlist;
-    }
-    else {
-        while (p->next && p->next->priority <= priority) {
-            p = p->next;
-        }
-        newlist->next = p->next;
-        p->next = newlist;
-    }
+class priority_list{
+
+	private:
+		node *head = 0;
+
+	public:
+		
+		void queue(int, int);
+		void dequeue(int);
+		void list();
+};
+
+// listeye oncelige bagli ekleme
+void priority_list::queue(int data, int priority){
+	
+	node *newnode = new node;  //nodea degerleri atama
+ 	newnode -> data = data;
+	newnode -> priority = priority;
+	
+	node *p = head;  //listenin basina pointer atama
+	
+	if(head == 0 || priority < head ->priority){
+		newnode -> next = head;  //liste bossa veya eklenecek nodeun onceligi listenin basindan yuksekse
+		head = newnode;          //yeni node listenenin basi olur 
+	}
+	else{
+		while(p -> next && priority >= p -> next -> priority){ //yeni nodedan dusuk bir onceligi bulana kadar listede dolasir
+			p = p -> next;										//listenin sonuna gelirse durur
+		}
+		newnode -> next = p ->next;   //buldugu yere yeni nodeu yerlestirir
+		p -> next = newnode;
+	}
+	
 }
 
-void list::sil(int priority) {
-    list* p = head;
-    list* prev = nullptr;
-
-    while (p) {
-        if (p->priority == priority) {
-            if (prev) {
-                prev->next = p->next;
-            }
-            else {
-                head = p->next;
-            }
-            delete p;
-            return;
-        }
-        prev = p;
-        p = p->next;
-    }
+void priority_list::dequeue(int priority){
+	
+	node *p = head;
+	node *prev = 0;
+	
+	while(p){
+		if(p -> priority == priority){  //silinmek istenen oncelik degerini bulduysa ondan once bir deger var mi diye bakar
+			if(prev) prev -> next = p ->next; //eger varsa onun nextini silinecek degerin nexti yapar
+			else head = p -> next;				//silinecek degerden once bir eleman yoksa, silinecek deger listenin basidir
+			delete p;							//listenin basini silinecek elemanin nextini yapar
+			return;
+		}
+		else{         //silinmek istenen oncelik degerini bulamadiysa pointerlari listede bi ilerletir
+			prev = p;
+			p = p -> next;
+		}
+	}
+		
 }
 
-int list::say() {
-    int x = 0;
-    list* p = head;
-    while (p) {
-        p = p->next;
-        x++;
-    }
-    return x;
+void priority_list::list(){
+	
+	node *p = head;
+	int i = 1;
+	
+	if(!p) cout<< "Liste Bos! "<<endl;
+	
+	else{
+		while(p){
+			cout<<i<<". Eleman = "<<p->data<<", Onceligi = "<< p->priority<<endl;
+			p = p -> next;
+			i++;
+		}
+	}
+	cout<<endl;
 }
 
-void list::listele() {
-    list* p = head;
-    int i = 1;
-    if (!p) {
-        cout << "Liste bos" << endl;
-    }
-    else {
-        while (p) {
-            cout << i << "= oncelik: " << p->priority << ", veri: " << p->data << endl;
-            p = p->next;
-            i++;
-        }
-    }
-}
 
-int main() {
-    list a(0, 0);
+
+int main(){
+	priority_list a;
+	
 	char ch;
     int data, priority;
 
@@ -89,7 +95,6 @@ int main() {
         cout << "********************************" << endl
              << "Eklemek icin  ----> E" << endl
              << "Silmek icin ------> S" << endl
-             << "Saymak icin ------> Y" << endl
              << "Listelemek icin --> L" << endl
              << "Cikis icin ------> C" << endl
              << "********************************" << endl << endl;
@@ -101,23 +106,19 @@ int main() {
             case 'E':
                 cout << "Eklemek istediginiz veriyi giriniz (Sayi):" << endl;
                 cin >> data;
-                cout << "Eklemek istediginiz verinin onceligini giriniz"<<endl;
+                cout << "Eklemek istediginiz verinin onceligini giriniz:"<<endl;
                 cin >> priority;
-                a.ekle(data, priority);
+                a.queue(data, priority);
                 break;
 
             case 'S':
                 cout << "Silmek istediginiz onceligi giriniz:" << endl;
                 cin >> priority;
-                a.sil(priority);
-                break;
-
-            case 'Y':
-                cout << "Kuyruktaki eleman sayisi: " << a.say() << endl << endl;
-                break;
+                a.dequeue(priority);
+                break;		
 
             case 'L':
-                a.listele();
+                a.list();
                 break;
 
             default:
@@ -126,4 +127,5 @@ int main() {
     }
 
     return 0;
+	
 }

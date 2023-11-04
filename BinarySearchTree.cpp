@@ -82,8 +82,7 @@ void BinarySearchTree::remove(int d)
 	bool found = false;
 	
 	if(isEmpty())
-	{
-		
+	{	
 		cout << "Tree is empty! "<<endl;
 		return; 
 	}
@@ -97,7 +96,7 @@ void BinarySearchTree::remove(int d)
 		if(curr -> data == d)
 		{
 			found = true;
-			return;
+			break;
 		}		
 		else
 		{
@@ -107,16 +106,73 @@ void BinarySearchTree::remove(int d)
 		}	
 		
 	}
+	
 	if(!found)
 	{
 		cout<<"Data not found!"<<endl;
 		return;
 	}	
 	
+	
 	//if data found there are 3 cases to remove
+	//0 - wer are removing the root 
 	//1 - we are removing a leaf
 	//2 - we are removing a node with 1 child
 	//3- we are removing a node with 2 child
+
+	if(curr == root && root != NULL)
+	{
+		//1 - root is the only node
+		if(root -> left == NULL && root -> right == NULL)
+		{
+			delete root;
+			root = NULL;
+			return;
+		}
+		
+		//2 - root has 1 child
+		
+		if(((root -> left != NULL) && (root -> right == NULL)) || ((root -> left == NULL) && (root -> right != NULL)))
+		{
+			//if root has only left child
+			//we should go all the way right in the left side and find the biggest node
+			if((root -> left != NULL) && (root -> right == NULL))
+			{	
+				node *curr = root -> left;
+				node *currPa = root;
+				if(curr -> right)
+				{	
+					while(curr -> right)
+					{
+						currPa = curr;
+						curr = curr -> right;	
+					}
+				//if the rightest node has a left node
+				if(curr -> left)
+				{
+					currPa -> right = curr -> left;
+					curr -> left = NULL;
+					root -> data = curr -> data;
+					delete curr;
+				}
+				else
+				{
+					root -> data = curr -> data;
+					delete curr;
+					currPa -> right = NULL;
+				}
+				}	
+			}
+			
+			//if root has only right child
+			
+		}
+		
+		
+			
+	}
+	
+	
 	
 	//node with single child
 	if((curr -> left == NULL) && (curr -> right != NULL) 
@@ -326,4 +382,3 @@ int main()
        }
     }
 }
-

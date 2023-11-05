@@ -184,6 +184,7 @@ void BinarySearchTree::remove(int d)
 		{
 			delete curr;
 			root = NULL;
+			return;
 		}
 		else if(parent -> left == curr) parent -> left = NULL;
 		else parent -> right = NULL;
@@ -231,8 +232,13 @@ return;
 	
 	
 void BinarySearchTree::print_inorder()
-{
-	inorder(root);
+{	
+	if(isEmpty())
+	{	
+		cout << "Tree is empty! "<<endl;
+		return; 
+	}
+	else inorder(root);
 }
 
 //left value right order
@@ -250,7 +256,12 @@ void BinarySearchTree::inorder(node* p)
 
 void BinarySearchTree::print_preorder()
 {
-	preorder(root);
+	if(isEmpty())
+	{	
+		cout << "Tree is empty! "<<endl;
+		return; 
+	}
+	else preorder(root);
 }
 
 //value left right order
@@ -268,7 +279,12 @@ void BinarySearchTree::preorder(node* p)
 
 void BinarySearchTree::print_postorder()
 {
-	postorder(root);
+	if(isEmpty())
+	{	
+		cout << "Tree is empty! "<<endl;
+		return; 
+	}
+	else postorder(root);
 }
 
 //left right value order
@@ -301,12 +317,13 @@ int main()
        cout<<" 6. Exit "<<endl;
        cout<<" Enter your choice : ";
        cin>>ch;
+       
        switch(ch)
        {
            case 1 : cout<<" Enter Number to be inserted : ";
                     cin>>tmp;
                     b.insert(tmp);
-                    break;
+				    break;
            case 2 : cout<<endl;
                     cout<<" In-Order Traversal "<<endl;
                     cout<<" -------------------"<<endl;

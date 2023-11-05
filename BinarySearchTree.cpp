@@ -1,7 +1,3 @@
-//remove functionality not working
-//fix it
-
-
 #include <iostream>
 
 using namespace std;
@@ -113,15 +109,13 @@ void BinarySearchTree::remove(int d)
 		return;
 	}	
 	
+	// 3 cases when removing
+	// 1 - we are removing a node with 1 child
+	// 2 - we are removing a leaf node 
+	// 3 we are removeing a node with 2 children
+	// root cases can be specified inside of these cases
 	
-	//if data found there are 3 cases to remove
-	//0 - wer are removing the root 
-	//1 - we are removing a leaf
-	//2 - we are removing a node with 1 child
-	//3- we are removing a node with 2 child
-	
-	
-	//node with single child
+	// node with 1 child
 	if((curr -> left == NULL) && (curr -> right != NULL) 
 	||(curr ->left != NULL) && (curr -> right == NULL))
 	{
@@ -129,18 +123,22 @@ void BinarySearchTree::remove(int d)
 		// only right child
 		if(curr -> left == NULL && curr -> right != NULL )
 		{	
+			// if the curr node is the root new root will be the right subtree's first node
 			if(curr = root)
 			{
 				root = curr -> right;
 				delete curr;	
 			}
-			
+
+			// if the curr node is the left node of its parent, parent's new left node will be curr's right node 
+			// if there isnt a right node of the curr its gonna be NULL
 			else if(parent -> left == curr)
 			{
 				
 				parent -> left = curr -> right;
 				delete curr;
 			}
+			// curr is right node of its parent, new right node will be curr's right node	
 			else
 			{
 				
@@ -154,18 +152,23 @@ void BinarySearchTree::remove(int d)
 		// only left child
 		else
 		{
+			// if the curr node is the root new root will be the left subtree's first node
 			if(curr = root)
 			{
 				root = curr -> left;
 				delete curr;
 			}
-			
+				
+			// if the curr node is the left node of its parent, parent's new left node will be curr's left node 
+			// if there isnt a left node of the curr its gonna be NULL
 			else if(parent -> left == curr)
 			{
 				
 				parent -> left = curr -> left;
 				delete curr;
 			}
+			
+			// curr is right node of its parent, new right node will be curr's left node	
 			else
 			{
 				
@@ -180,12 +183,15 @@ void BinarySearchTree::remove(int d)
 	//leaf node 
 	if(curr -> left == NULL && curr -> right == NULL)
 	{	
+		// if the curr node is the root 
+		// delete curr set root to NULL
 		if(curr = root)
 		{
 			delete curr;
 			root = NULL;
 			return;
 		}
+	
 		else if(parent -> left == curr) parent -> left = NULL;
 		else parent -> right = NULL;
 		delete curr;
@@ -198,6 +204,8 @@ void BinarySearchTree::remove(int d)
 	{
 		node * successor = curr -> right;
 		node * successorParent = curr;
+
+		//locate the leftmost node of the right subtree
 		if(successor -> left)
 		{
 			while(successor -> left)
@@ -208,11 +216,14 @@ void BinarySearchTree::remove(int d)
 		}
 		
 		curr -> data = successor -> data;
-		
+
+		// if successor (the node thats gonna replace the curr) has a right node 
+		// that right node is gonna be the new left node of the successor node's parent
 		if(successor -> right)
 		{
 			successorParent -> left = successor -> right;
 		}
+		
 		//if the successorparent is root delete right node 
 		//this contition is for the smaller scale trees
 		if(successorParent == curr)

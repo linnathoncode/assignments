@@ -1,7 +1,3 @@
-//remove functionality not working
-//fix it
-
-
 #include <iostream>
 
 using namespace std;
@@ -120,6 +116,7 @@ void BinarySearchTree::remove(int d)
 	//2 - we are removing a node with 1 child
 	//3- we are removing a node with 2 child
 
+	//removing root
 	if(curr == root && root != NULL)
 	{
 		//1 - root is the only node
@@ -130,15 +127,15 @@ void BinarySearchTree::remove(int d)
 			return;
 		}
 		
-		//2 - root has 1 child
+		//2 - root has only left child
 		
-		if(((root -> left != NULL) && (root -> right == NULL)) || ((root -> left == NULL) && (root -> right != NULL)))
+		if((root -> left != NULL) && (root -> right == NULL))
 		{
 			//if root has only left child
 			//we should go all the way right in the left side and find the biggest node
 			if((root -> left != NULL) && (root -> right == NULL))
 			{	
-				node *curr = root -> left;
+				curr = root -> left;
 				node *currPa = root;
 				if(curr -> right)
 				{	
@@ -147,6 +144,7 @@ void BinarySearchTree::remove(int d)
 						currPa = curr;
 						curr = curr -> right;	
 					}
+				}
 				//if the rightest node has a left node
 				if(curr -> left)
 				{
@@ -161,15 +159,46 @@ void BinarySearchTree::remove(int d)
 					delete curr;
 					currPa -> right = NULL;
 				}
-				}	
+					
 			}
 			
-			//if root has only right child
-			
+
 		}
+		//root has 2 children or root has only right child
+		//if root has 2 children we can just pretend that it only has right child
+	
+		else
+		{
+			//if root has only right child 
 		
+			curr = root -> right;
+			node *currPa = root;
+			if(curr -> left)
+			{	
+				while(curr -> left)
+				{
+					currPa = curr;
+					curr = curr -> left;
+				}
+			}
+			//if the leftist node has a right node
+			if(curr -> right)
+			{
+				currPa -> left = curr -> right;
+				curr -> right = NULL;
+				root -> data = curr -> data;
+				delete curr;
+			}
+			else
+			{
+				root -> data = curr -> data;
+				delete curr;
+				currPa -> left = NULL;
+			}
 		
+		}
 			
+		return;		
 	}
 	
 	

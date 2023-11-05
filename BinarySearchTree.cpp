@@ -82,8 +82,7 @@ void BinarySearchTree::remove(int d)
 	bool found = false;
 	
 	if(isEmpty())
-	{
-		
+	{	
 		cout << "Tree is empty! "<<endl;
 		return; 
 	}
@@ -97,7 +96,7 @@ void BinarySearchTree::remove(int d)
 		if(curr -> data == d)
 		{
 			found = true;
-			return;
+			break;
 		}		
 		else
 		{
@@ -107,16 +106,20 @@ void BinarySearchTree::remove(int d)
 		}	
 		
 	}
+	
 	if(!found)
 	{
 		cout<<"Data not found!"<<endl;
 		return;
 	}	
 	
+	
 	//if data found there are 3 cases to remove
+	//0 - wer are removing the root 
 	//1 - we are removing a leaf
 	//2 - we are removing a node with 1 child
 	//3- we are removing a node with 2 child
+	
 	
 	//node with single child
 	if((curr -> left == NULL) && (curr -> right != NULL) 
@@ -125,8 +128,14 @@ void BinarySearchTree::remove(int d)
 		
 		// only right child
 		if(curr -> left == NULL && curr -> right != NULL )
-		{
-			if(parent -> left == curr)
+		{	
+			if(curr = root)
+			{
+				root = curr -> right;
+				delete curr;	
+			}
+			
+			else if(parent -> left == curr)
 			{
 				
 				parent -> left = curr -> right;
@@ -145,8 +154,13 @@ void BinarySearchTree::remove(int d)
 		// only left child
 		else
 		{
-		
-			if(parent -> left == curr)
+			if(curr = root)
+			{
+				root = curr -> left;
+				delete curr;
+			}
+			
+			else if(parent -> left == curr)
 			{
 				
 				parent -> left = curr -> left;
@@ -165,8 +179,14 @@ void BinarySearchTree::remove(int d)
 	
 	//leaf node 
 	if(curr -> left == NULL && curr -> right == NULL)
-	{
-		if(parent -> left == curr) parent -> left = NULL;
+	{	
+		if(curr = root)
+		{
+			delete curr;
+			root = NULL;
+			return;
+		}
+		else if(parent -> left == curr) parent -> left = NULL;
 		else parent -> right = NULL;
 		delete curr;
 		return;
@@ -176,57 +196,49 @@ void BinarySearchTree::remove(int d)
 	//replace node with smallest value in right subtree
 	if(curr -> left != NULL && curr -> right != NULL)
 	{
-		node * chkr;
-		chkr = curr -> right;
-		
-		if((chkr -> left = NULL ) && (chkr -> right == NULL))
+		node * successor = curr -> right;
+		node * successorParent = curr;
+		if(successor -> left)
 		{
-			curr = chkr;
-			delete chkr;
-			curr -> right = NULL;
+			while(successor -> left)
+			{
+				successorParent = successor;
+				successor = successor -> left;
+			}	
 		}
-		//right child has children
+		
+		curr -> data = successor -> data;
+		
+		if(successor -> right)
+		{
+			successorParent -> left = successor -> right;
+		}
+		//if the successorparent is root delete right node 
+		//this contition is for the smaller scale trees
+		if(successorParent == curr)
+		{
+			successorParent -> right = NULL;
+		}
 		else
 		{
-			//if the node's right child has a left child
-			//move all the way down to the left to locate smallest element
-			
-			if((curr-> right) -> left != NULL)
-			{
-				node *lcurr;
-				node *lcurrPa;
-				lcurrPa = curr -> right;
-				lcurr = (curr -> right) -> left;
-				while(lcurr -> left != NULL)
-				{
-					lcurrPa = lcurr;
-					lcurr = lcurr -> left;					
-				}
-				curr -> data = lcurr -> data;
-				delete lcurr;
-				lcurrPa -> left = NULL;
-			}
-			
-			//if the node's right child has no left child
-			else
-			{
-				node *temp;
-				temp = curr -> right;
-				curr -> data = temp -> data;
-				curr -> right = temp -> right;
-				delete temp;
-			}
-			
+			successorParent -> left = successor -> right;
 		}
-	return;
+		delete successor;
+				
+		return;
 	}
-		
+return;	
 }
 	
 	
 void BinarySearchTree::print_inorder()
-{
-	inorder(root);
+{	
+	if(isEmpty())
+	{	
+		cout << "Tree is empty! "<<endl;
+		return; 
+	}
+	else inorder(root);
 }
 
 //left value right order
@@ -244,7 +256,12 @@ void BinarySearchTree::inorder(node* p)
 
 void BinarySearchTree::print_preorder()
 {
-	preorder(root);
+	if(isEmpty())
+	{	
+		cout << "Tree is empty! "<<endl;
+		return; 
+	}
+	else preorder(root);
 }
 
 //value left right order
@@ -262,7 +279,12 @@ void BinarySearchTree::preorder(node* p)
 
 void BinarySearchTree::print_postorder()
 {
-	postorder(root);
+	if(isEmpty())
+	{	
+		cout << "Tree is empty! "<<endl;
+		return; 
+	}
+	else postorder(root);
 }
 
 //left right value order
@@ -295,12 +317,13 @@ int main()
        cout<<" 6. Exit "<<endl;
        cout<<" Enter your choice : ";
        cin>>ch;
+       
        switch(ch)
        {
            case 1 : cout<<" Enter Number to be inserted : ";
                     cin>>tmp;
                     b.insert(tmp);
-                    break;
+				    break;
            case 2 : cout<<endl;
                     cout<<" In-Order Traversal "<<endl;
                     cout<<" -------------------"<<endl;
@@ -326,4 +349,3 @@ int main()
        }
     }
 }
-

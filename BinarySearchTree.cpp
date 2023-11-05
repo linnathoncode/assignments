@@ -1,3 +1,7 @@
+//remove functionality not working
+//fix it
+
+
 #include <iostream>
 
 using namespace std;
@@ -115,92 +119,6 @@ void BinarySearchTree::remove(int d)
 	//1 - we are removing a leaf
 	//2 - we are removing a node with 1 child
 	//3- we are removing a node with 2 child
-
-	//removing root
-	if(curr == root && root != NULL)
-	{
-		//1 - root is the only node
-		if(root -> left == NULL && root -> right == NULL)
-		{
-			delete root;
-			root = NULL;
-			return;
-		}
-		
-		//2 - root has only left child
-		
-		if((root -> left != NULL) && (root -> right == NULL))
-		{
-			//if root has only left child
-			//we should go all the way right in the left side and find the biggest node
-			if((root -> left != NULL) && (root -> right == NULL))
-			{	
-				curr = root -> left;
-				node *currPa = root;
-				if(curr -> right)
-				{	
-					while(curr -> right)
-					{
-						currPa = curr;
-						curr = curr -> right;	
-					}
-				}
-				//if the rightest node has a left node
-				if(curr -> left)
-				{
-					currPa -> right = curr -> left;
-					curr -> left = NULL;
-					root -> data = curr -> data;
-					delete curr;
-				}
-				else
-				{
-					root -> data = curr -> data;
-					delete curr;
-					currPa -> right = NULL;
-				}
-					
-			}
-			
-
-		}
-		//root has 2 children or root has only right child
-		//if root has 2 children we can just pretend that it only has right child
-	
-		else
-		{
-			//if root has only right child 
-		
-			curr = root -> right;
-			node *currPa = root;
-			if(curr -> left)
-			{	
-				while(curr -> left)
-				{
-					currPa = curr;
-					curr = curr -> left;
-				}
-			}
-			//if the leftist node has a right node
-			if(curr -> right)
-			{
-				currPa -> left = curr -> right;
-				curr -> right = NULL;
-				root -> data = curr -> data;
-				delete curr;
-			}
-			else
-			{
-				root -> data = curr -> data;
-				delete curr;
-				currPa -> left = NULL;
-			}
-		
-		}
-			
-		return;		
-	}
-	
 	
 	
 	//node with single child
@@ -210,8 +128,14 @@ void BinarySearchTree::remove(int d)
 		
 		// only right child
 		if(curr -> left == NULL && curr -> right != NULL )
-		{
-			if(parent -> left == curr)
+		{	
+			if(curr = root)
+			{
+				root = curr -> right;
+				delete curr;	
+			}
+			
+			else if(parent -> left == curr)
 			{
 				
 				parent -> left = curr -> right;
@@ -230,8 +154,13 @@ void BinarySearchTree::remove(int d)
 		// only left child
 		else
 		{
-		
-			if(parent -> left == curr)
+			if(curr = root)
+			{
+				root = curr -> left;
+				delete curr;
+			}
+			
+			else if(parent -> left == curr)
 			{
 				
 				parent -> left = curr -> left;
@@ -250,8 +179,13 @@ void BinarySearchTree::remove(int d)
 	
 	//leaf node 
 	if(curr -> left == NULL && curr -> right == NULL)
-	{
-		if(parent -> left == curr) parent -> left = NULL;
+	{	
+		if(curr = root)
+		{
+			delete curr;
+			root = NULL;
+		}
+		else if(parent -> left == curr) parent -> left = NULL;
 		else parent -> right = NULL;
 		delete curr;
 		return;
@@ -261,51 +195,38 @@ void BinarySearchTree::remove(int d)
 	//replace node with smallest value in right subtree
 	if(curr -> left != NULL && curr -> right != NULL)
 	{
-		node * chkr;
-		chkr = curr -> right;
-		
-		if((chkr -> left = NULL ) && (chkr -> right == NULL))
+		node * successor = curr -> right;
+		node * successorParent = curr;
+		if(successor -> left)
 		{
-			curr = chkr;
-			delete chkr;
-			curr -> right = NULL;
+			while(successor -> left)
+			{
+				successorParent = successor;
+				successor = successor -> left;
+			}	
 		}
-		//right child has children
+		
+		curr -> data = successor -> data;
+		
+		if(successor -> right)
+		{
+			successorParent -> left = successor -> right;
+		}
+		//if the successorparent is root delete right node 
+		//this contition is for the smaller scale trees
+		if(successorParent == curr)
+		{
+			successorParent -> right = NULL;
+		}
 		else
 		{
-			//if the node's right child has a left child
-			//move all the way down to the left to locate smallest element
-			
-			if((curr-> right) -> left != NULL)
-			{
-				node *lcurr;
-				node *lcurrPa;
-				lcurrPa = curr -> right;
-				lcurr = (curr -> right) -> left;
-				while(lcurr -> left != NULL)
-				{
-					lcurrPa = lcurr;
-					lcurr = lcurr -> left;					
-				}
-				curr -> data = lcurr -> data;
-				delete lcurr;
-				lcurrPa -> left = NULL;
-			}
-			
-			//if the node's right child has no left child
-			else
-			{
-				node *temp;
-				temp = curr -> right;
-				curr -> data = temp -> data;
-				curr -> right = temp -> right;
-				delete temp;
-			}
-			
+			successorParent -> left = successor -> right;
 		}
-	return;
+		delete successor;
+				
+		return;
 	}
-		
+return;	
 }
 	
 	

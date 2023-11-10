@@ -61,9 +61,9 @@ int avl_tree::diff(avl_node * temp)
 	return b_factor;
 }
 
-// right right rotation
-avl_node * avl_tree::rrRotation(avl_node * parent)
-{
+// left rotation - right heavy unbalance
+avl_node * avl_tree::llRotation(avl_node * parent)
+{	
 	avl_node *temp;
 	temp = parent -> right;
 	parent -> right = temp -> left;
@@ -72,9 +72,9 @@ avl_node * avl_tree::rrRotation(avl_node * parent)
 
 }
 
-// left left rotation
-avl_node * avl_tree::llRotation(avl_node * parent)
-{
+// right rotation - left heavy unbalance
+avl_node * avl_tree::rrRotation(avl_node * parent)
+{	
 	avl_node *temp;
 	temp = parent -> left;
 	parent -> left = temp -> right;
@@ -83,23 +83,23 @@ avl_node * avl_tree::llRotation(avl_node * parent)
 
 }
 
-// left right rotation
+// left right rotation - left's right subtree heavy
 avl_node * avl_tree::lrRotation(avl_node * parent)
-{
+{	
 	avl_node *temp;
 	temp = parent -> left;
-	parent -> left = rrRotation(temp);
-	return llRotation(parent);
+	parent -> left = llRotation(temp);
+	return rrRotation(parent);
 
 }
 
-// right left ratation
+// right left ratation - right's left subtree heavy
 avl_node * avl_tree::rlRotation(avl_node * parent)
-{
+{	
 	avl_node *temp;
 	temp = parent -> right;
-	parent -> right =llRotation(temp);
-	return rrRotation(parent);
+	parent -> right =rrRotation(temp);
+	return llRotation(parent);
 
 }
 
@@ -110,13 +110,13 @@ avl_node *avl_tree::balance(avl_node * temp)
 	int bal_factor = diff(temp);
 	if(bal_factor > 1)
 	{
-		if(diff(temp -> left) > 0) temp = llRotation(temp);
+		if(diff(temp -> left) > 0) temp = rrRotation(temp);
 		else temp = lrRotation(temp);
 	}
 	else if(bal_factor < - 1)
 	{
 		if(diff(temp -> right) > 0) temp = rlRotation(temp);
-		else temp = rrRotation(temp);
+		else temp = llRotation(temp);
 	}
 	return temp;
 }
@@ -253,6 +253,5 @@ int main()
     return 0;
 }
 	
-
 
 

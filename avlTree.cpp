@@ -16,6 +16,7 @@ struct avl_node
 class avl_tree
 {
 	public:
+		bool isEmpty() const {return root == NULL;}
 		int height(avl_node *);
 		int diff(avl_node *);
 		avl_node * rrRotation(avl_node *);
@@ -24,6 +25,7 @@ class avl_tree
 		avl_node * rlRotation(avl_node *);
 		avl_node * balance(avl_node *);
 		avl_node * insert(avl_node *, int);
+		void remove(int);
 		void display(avl_node *, int);
 		void inorder(avl_node*);
 		void preorder(avl_node*);
@@ -157,7 +159,7 @@ void avl_tree::display(avl_node* ptr, int level)
 		display(ptr -> right, level +1);
 		cout << "\n";
 		if(ptr == root) cout<<"Root -> ";
-		for(i = 0; i < level && ptr != root; i++) cout<< "               ";
+		for(i = 0; i < level && ptr != root; i++) cout<< "       ";
 		cout<< ptr -> data;
 		display(ptr->left, level +1);
 	}
@@ -192,6 +194,180 @@ void avl_tree::postorder(avl_node * tree)
 }
 
 
+void avl_tree::remove(int d)
+{
+	//locate the element
+	bool found = false;
+	
+	if(isEmpty())
+	{	
+		cout << "Tree is empty! "<<endl;
+		return; 
+	}
+	
+	avl_node *curr;
+	avl_node *parent;
+	curr = root;
+	
+	while(curr)
+	{
+		if(curr -> data == d)
+		{
+			found = true;
+			break;
+		}		
+		else
+		{
+			parent = curr;
+			if(d > curr -> data) curr = curr -> right;
+			else curr = curr -> left;
+		}	
+		
+	}
+	
+	if(!found)
+	{
+		cout<<"Data not found!"<<endl;
+		return;
+	}	
+	
+	// 3 cases when removing
+	// 1 - we are removing a node with 1 child
+	// 2 - we are removing a leaf node 
+	// 3 we are removeing a node with 2 children
+	// root cases can be specified inside of these cases
+	
+	// node with 1 child
+	if((curr -> left == NULL) && (curr -> right != NULL) 
+	||(curr ->left != NULL) && (curr -> right == NULL))
+	{
+		
+		// only right child
+		if(curr -> left == NULL && curr -> right != NULL )
+		{	
+			// if the curr node is the root new root will be the right subtree's first node
+			if(curr == root)
+			{
+				root = curr -> right;
+				delete curr;	
+				
+			}
+
+			// if the curr node is the left node of its parent, parent's new left node will be curr's right node 
+			// if there isnt a right node of the curr its gonna be NULL
+			else if(parent -> left == curr)
+			{
+				
+				parent -> left = curr -> right;
+				delete curr;
+			}
+			// curr is right node of its parent, new right node will be curr's right node	
+			else
+			{
+				
+				parent -> right = curr -> right;
+				delete curr;
+			}
+			root = balance(root);
+			return;
+		}	
+		
+		
+		// only left child
+		else
+		{
+			// if the curr node is the root new root will be the left subtree's first node
+			if(curr == root)
+			{
+				root = curr -> left;
+				delete curr;
+			}
+				
+			// if the curr node is the left node of its parent, parent's new left node will be curr's left node 
+			// if there isnt a left node of the curr its gonna be NULL
+			else if(parent -> left == curr)
+			{
+				
+				parent -> left = curr -> left;
+				delete curr;
+			}
+			
+			// curr is right node of its parent, new right node will be curr's left node	
+			else
+			{
+				
+				parent -> right = curr -> left;
+				delete curr;
+			}
+			root = balance(root);
+			return;
+		
+		}	
+	}
+	
+	//leaf node 
+	if(curr -> left == NULL && curr -> right == NULL)
+	{	
+		// if the curr node is the root 
+		// delete curr set root to NULL
+		if(curr = root)
+		{
+			delete curr;
+			root = NULL;
+			return;
+		}
+	
+		else if(parent -> left == curr) parent -> left = NULL;
+		else parent -> right = NULL;
+		delete curr;
+		root = balance(root);
+		return;
+	}
+	
+	//node with 2 children
+	//replace node with smallest value in right subtree
+	if(curr -> left != NULL && curr -> right != NULL)
+	{
+		avl_node * successor = curr -> right;
+		avl_node * successorParent = curr;
+
+		//locate the leftmost node of the right subtree
+		if(successor -> left)
+		{
+			while(successor -> left)
+			{
+				successorParent = successor;
+				successor = successor -> left;
+			}	
+		}
+		
+		curr -> data = successor -> data;
+
+		// if successor (the node thats gonna replace the curr) has a right node 
+		// that right node is gonna be the new left node of the successor node's parent
+		if(successor -> right)
+		{
+			successorParent -> left = successor -> right;
+		}
+		
+		//if the successorparent is root delete right node 
+		//this contition is for the smaller scale trees
+		if(successorParent == curr)
+		{
+			successorParent -> right = NULL;
+		}
+		else
+		{
+			successorParent -> left = successor -> right;
+		}
+		delete successor;
+		root = balance(root);
+		return;
+	}
+return;	
+}
+
+
 
 
 
@@ -210,6 +386,7 @@ int main()
         cout<<"4.PreOrder traversal"<<endl;
         cout<<"5.PostOrder traversal"<<endl;
         cout<<"6.Exit"<<endl;
+        cout<<"7.Delete"<<endl;
         cout<<"Enter your Choice: ";
         cin>>choice;
         switch(choice)
@@ -229,21 +406,28 @@ int main()
             avl.display(root, 1);
             break;
         case 3:
+        	cout<<"Enter value to be deleted:";
+        	cin>>item;
+        	avl.remove(item);
+        	cout<<"Balanced AVL Tree:"<<endl;
+            avl.display(root, 1);
+			break;
+		case 4:
             cout<<"Inorder Traversal:"<<endl;
             avl.inorder(root);
             cout<<endl;
             break;
-        case 4:
+        case 5:
             cout<<"Preorder Traversal:"<<endl;
             avl.preorder(root);
             cout<<endl;
             break;
-        case 5:
+        case 6:
             cout<<"Postorder Traversal:"<<endl;
             avl.postorder(root);    
             cout<<endl;
             break;
-        case 6:
+        case 7:
             exit(1);    
             break;
         default:

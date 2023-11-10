@@ -124,7 +124,7 @@ void BinarySearchTree::remove(int d)
 		if(curr -> left == NULL && curr -> right != NULL )
 		{	
 			// if the curr node is the root new root will be the right subtree's first node
-			if(curr = root)
+			if(curr == root)
 			{
 				root = curr -> right;
 				delete curr;	
@@ -153,7 +153,7 @@ void BinarySearchTree::remove(int d)
 		else
 		{
 			// if the curr node is the root new root will be the left subtree's first node
-			if(curr = root)
+			if(curr == root)
 			{
 				root = curr -> left;
 				delete curr;

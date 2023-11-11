@@ -1,3 +1,6 @@
+//implement a real removal function
+//which is a recursive function
+
 #include <iostream>
 #define MAX_CHAR 26
 using namespace std;
